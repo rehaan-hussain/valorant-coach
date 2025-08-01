@@ -29,14 +29,15 @@ class ScreenCapture:
         self.target_fps = fps
         self.frame_interval = 1.0 / fps
         
-        # Initialize screen capture
-        self.sct = mss.mss()
-        self.monitor = self.sct.monitors[monitor_id]
+        # Get monitor info (but don't create MSS instance yet)
+        with mss.mss() as sct:
+            self.monitor = sct.monitors[monitor_id]
         
         # Capture state
         self.is_capturing = False
         self.capture_thread = None
         self.frame_callback = None
+        self._lock = threading.Lock()  # Thread safety lock
         
         # Performance tracking
         self.frame_count = 0
@@ -52,61 +53,81 @@ class ScreenCapture:
         Args:
             callback: Function to call with each captured frame
         """
-        if self.is_capturing:
-            logger.warning("Capture already running")
-            return
-        
-        self.frame_callback = callback
-        self.is_capturing = True
-        self.frame_count = 0
-        self.start_time = time.time()
-        
-        self.capture_thread = threading.Thread(target=self._capture_loop)
-        self.capture_thread.daemon = True
-        self.capture_thread.start()
-        
-        logger.info("Screen capture started")
+        with self._lock:
+            if self.is_capturing:
+                logger.warning("Capture already running")
+                return
+            
+            self.frame_callback = callback
+            self.is_capturing = True
+            self.frame_count = 0
+            self.start_time = time.time()
+            
+            self.capture_thread = threading.Thread(target=self._capture_loop)
+            self.capture_thread.daemon = True
+            self.capture_thread.start()
+            
+            logger.info("Screen capture started")
     
     def stop_capture(self):
         """Stop capturing frames"""
-        self.is_capturing = False
-        if self.capture_thread:
-            self.capture_thread.join(timeout=2.0)
+        with self._lock:
+            if not self.is_capturing:
+                return
+            
+            # Signal thread to stop
+            self.is_capturing = False
         
+        # Wait for thread to finish
+        if self.capture_thread and self.capture_thread.is_alive():
+            self.capture_thread.join(timeout=5.0)
+            if self.capture_thread.is_alive():
+                logger.warning("Capture thread did not stop cleanly")
+        
+        # Calculate final stats
         if self.start_time:
             elapsed = time.time() - self.start_time
             self.actual_fps = self.frame_count / elapsed if elapsed > 0 else 0
             logger.info(f"Capture stopped. FPS: {self.actual_fps:.2f}")
     
     def _capture_loop(self):
-        """Main capture loop"""
+        """Main capture loop with proper MSS context management"""
         last_frame_time = time.time()
         
-        while self.is_capturing:
-            current_time = time.time()
+        # Create MSS context for this thread
+        with mss.mss() as sct:
+            logger.debug("MSS context created for capture thread")
             
-            # Maintain target FPS
-            if current_time - last_frame_time >= self.frame_interval:
-                try:
-                    # Capture screen
-                    screenshot = self.sct.grab(self.monitor)
-                    frame = np.array(screenshot)
-                    
-                    # Convert from BGRA to BGR
-                    frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
-                    
-                    self.frame_count += 1
-                    last_frame_time = current_time
-                    
-                    # Call callback if provided
-                    if self.frame_callback:
-                        self.frame_callback(frame)
+            while self.is_capturing:
+                current_time = time.time()
+                
+                # Maintain target FPS
+                if current_time - last_frame_time >= self.frame_interval:
+                    try:
+                        # Capture screen
+                        screenshot = sct.grab(self.monitor)
+                        frame = np.array(screenshot)
                         
-                except Exception as e:
-                    logger.error(f"Error capturing frame: {e}")
-                    time.sleep(0.01)  # Brief pause on error
-            else:
-                time.sleep(0.001)  # Small sleep to prevent busy waiting
+                        # Convert from BGRA to BGR
+                        frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
+                        
+                        self.frame_count += 1
+                        last_frame_time = current_time
+                        
+                        # Call callback if provided
+                        if self.frame_callback:
+                            try:
+                                self.frame_callback(frame)
+                            except Exception as e:
+                                logger.error(f"Error in frame callback: {e}")
+                                
+                    except Exception as e:
+                        logger.error(f"Error capturing frame: {e}")
+                        time.sleep(0.01)  # Brief pause on error
+                else:
+                    time.sleep(0.001)  # Small sleep to prevent busy waiting
+            
+            logger.debug("MSS context closing for capture thread")
     
     def capture_single_frame(self) -> Optional[np.ndarray]:
         """
@@ -116,10 +137,11 @@ class ScreenCapture:
             Captured frame as numpy array or None if failed
         """
         try:
-            screenshot = self.sct.grab(self.monitor)
-            frame = np.array(screenshot)
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
-            return frame
+            with mss.mss() as sct:
+                screenshot = sct.grab(self.monitor)
+                frame = np.array(screenshot)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
+                return frame
         except Exception as e:
             logger.error(f"Error capturing single frame: {e}")
             return None
@@ -155,8 +177,10 @@ class ScreenCapture:
         }
         logger.info(f"Capture region set to {width}x{height} at ({x}, {y})")
     
+    def is_running(self) -> bool:
+        """Check if capture is currently running"""
+        return self.is_capturing
+    
     def __del__(self):
         """Cleanup on destruction"""
         self.stop_capture()
-        if hasattr(self, 'sct'):
-            self.sct.close()

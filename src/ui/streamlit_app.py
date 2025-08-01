@@ -9,6 +9,7 @@ import cv2
 import numpy as np
 from typing import Dict, List
 import logging
+import atexit
 
 # Import our modules
 from ..capture import ScreenCapture, FrameProcessor
@@ -32,12 +33,26 @@ class ValorantCoachApp:
         # Session state
         if 'capture_running' not in st.session_state:
             st.session_state.capture_running = False
+        if 'capture_thread' not in st.session_state:
+            st.session_state.capture_thread = None
         if 'current_tips' not in st.session_state:
             st.session_state.current_tips = []
         if 'performance_data' not in st.session_state:
             st.session_state.performance_data = []
         if 'session_stats' not in st.session_state:
             st.session_state.session_stats = {}
+        
+        # Register cleanup function
+        atexit.register(self.cleanup)
+    
+    def cleanup(self):
+        """Cleanup resources when app is closed"""
+        try:
+            if self.capture and self.capture.is_running():
+                logger.info("Cleaning up capture resources")
+                self.capture.stop_capture()
+        except Exception as e:
+            logger.error(f"Error during cleanup: {e}")
     
     def setup_page(self):
         """Setup the Streamlit page configuration"""
@@ -140,6 +155,11 @@ class ValorantCoachApp:
     def start_coaching(self, monitor_id: int, fps: int, skill_level: str, primary_role: str):
         """Start the coaching session"""
         try:
+            # Check if capture is already running
+            if st.session_state.capture_running:
+                st.warning("Coaching session is already running!")
+                return
+            
             # Initialize components
             self.capture = ScreenCapture(monitor_id=monitor_id, fps=fps)
             self.processor = FrameProcessor()
@@ -161,6 +181,7 @@ class ValorantCoachApp:
             self.capture.start_capture(callback=self.frame_callback)
             self.is_running = True
             st.session_state.capture_running = True
+            st.session_state.capture_thread = self.capture
             
             st.success("🎮 Coaching session started! Play Valorant and receive real-time tips.")
             
@@ -171,11 +192,13 @@ class ValorantCoachApp:
     def stop_coaching(self):
         """Stop the coaching session"""
         try:
-            if self.capture:
+            # Stop capture if running
+            if self.capture and self.capture.is_running():
                 self.capture.stop_capture()
             
             self.is_running = False
             st.session_state.capture_running = False
+            st.session_state.capture_thread = None
             
             st.success("⏹️ Coaching session stopped.")
             
