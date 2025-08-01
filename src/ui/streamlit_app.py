@@ -12,9 +12,9 @@ import logging
 import atexit
 
 # Import our modules
-from ..capture import ScreenCapture, FrameProcessor
-from ..analysis import GameAnalyzer
-from ..coaching import Coach, PlayerProfile
+from src.capture import ScreenCapture, FrameProcessor
+from src.analysis import GameAnalyzer
+from src.coaching import Coach, PlayerProfile
 
 logger = logging.getLogger(__name__)
 
