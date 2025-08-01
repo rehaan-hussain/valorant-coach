@@ -7,6 +7,19 @@ import sys
 import os
 from pathlib import Path
 
+# --- Windows console safety: force UTF-8 or fall back to plain text ---
+import os, sys
+def _safe_print(s: str):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+    try:
+        print(s)
+    except UnicodeEncodeError:
+        # Fallback: strip non-ASCII characters
+        print(s.encode("ascii", "ignore").decode())
+
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
@@ -153,7 +166,7 @@ def test_demo_functionality():
 
 def main():
     """Run all tests"""
-    print("Valorant AI Coach - Installation Test")
+    _safe_print("🎮 Valorant AI Coach - Installation Test")
     print("=" * 50)
     
     # Test dependencies
