@@ -1,0 +1,12 @@
+# Advanced features (optional)
+tensorflow>=2.13.0
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.0
+easyocr>=1.7.0
+pynput>=1.7.0
+pygame>=2.5.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+websockets>=11.0.0
+asyncio-mqtt>=0.13.0
