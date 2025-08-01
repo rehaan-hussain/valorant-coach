@@ -11,7 +11,7 @@ from typing import Dict, List
 import logging
 
 # Import our modules
-from ..capture import ScreenCapture, FrameProcessor
+from src.capture import ScreenCapture, FrameProcessor
 from ..analysis import GameAnalyzer
 from ..coaching import Coach, PlayerProfile
 
