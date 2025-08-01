@@ -1,0 +1,27 @@
+{
+  "capture": {
+    "default_fps": 30,
+    "default_monitor": 1,
+    "max_frame_history": 1800
+  },
+  "analysis": {
+    "session_duration": 300,
+    "accuracy_threshold": 0.7,
+    "reaction_threshold": 0.3,
+    "movement_threshold": 0.5
+  },
+  "coaching": {
+    "tip_cooldown": 5.0,
+    "max_tips_per_session": 50,
+    "tip_priority_levels": 5
+  },
+  "ui": {
+    "default_port": 8501,
+    "default_host": "localhost",
+    "theme": "light"
+  },
+  "logging": {
+    "level": "INFO",
+    "log_file": "logs/valorant_coach.log"
+  }
+}
