@@ -58,12 +58,12 @@ class ValorantCoachApp:
         """Setup the Streamlit page configuration"""
         st.set_page_config(
             page_title="Valorant AI Coach",
-            page_icon="🎮",
+            page_icon="*",
             layout="wide",
             initial_sidebar_state="expanded"
         )
         
-        st.title("🎮 Valorant AI Coach")
+        st.title("Valorant AI Coach")
         st.markdown("### Your Personal AI Gaming Coach")
         
         # Add CSS for better styling
@@ -95,10 +95,10 @@ class ValorantCoachApp:
     
     def sidebar_setup(self):
         """Setup the sidebar with controls"""
-        st.sidebar.title("🎯 Coach Controls")
+        st.sidebar.title("Coach Controls")
         
         # Player Profile Section
-        st.sidebar.header("👤 Player Profile")
+        st.sidebar.header("Player Profile")
         
         skill_level = st.sidebar.selectbox(
             "Skill Level",
@@ -113,7 +113,7 @@ class ValorantCoachApp:
         )
         
         # Capture Settings
-        st.sidebar.header("📹 Capture Settings")
+        st.sidebar.header("Capture Settings")
         
         monitor_id = st.sidebar.selectbox(
             "Monitor",
@@ -131,25 +131,25 @@ class ValorantCoachApp:
         )
         
         # Control Buttons
-        st.sidebar.header("🎮 Controls")
+        st.sidebar.header("Controls")
         
         col1, col2 = st.sidebar.columns(2)
         
         with col1:
-            if st.button("▶️ Start Coaching", type="primary"):
+            if st.button("Start Coaching", type="primary"):
                 self.start_coaching(monitor_id, fps, skill_level, primary_role)
         
         with col2:
-            if st.button("⏹️ Stop Coaching"):
+            if st.button("Stop Coaching"):
                 self.stop_coaching()
         
         # Session Info
         if st.session_state.capture_running:
-            st.sidebar.header("📊 Session Info")
+            st.sidebar.header("Session Info")
             st.sidebar.metric("Frames Processed", st.session_state.session_stats.get('frames_processed', 0))
             st.sidebar.metric("Tips Given", len(st.session_state.current_tips))
             
-            if st.sidebar.button("📈 View Detailed Stats"):
+            if st.sidebar.button("View Detailed Stats"):
                 self.show_detailed_stats()
     
     def start_coaching(self, monitor_id: int, fps: int, skill_level: str, primary_role: str):
@@ -183,10 +183,10 @@ class ValorantCoachApp:
             st.session_state.capture_running = True
             st.session_state.capture_thread = self.capture
             
-            st.success("🎮 Coaching session started! Play Valorant and receive real-time tips.")
+            st.success("Coaching session started! Play Valorant and receive real-time tips.")
             
         except Exception as e:
-            st.error(f"❌ Failed to start coaching: {str(e)}")
+            st.error(f"Failed to start coaching: {str(e)}")
             logger.error(f"Failed to start coaching: {e}")
     
     def stop_coaching(self):
@@ -200,10 +200,10 @@ class ValorantCoachApp:
             st.session_state.capture_running = False
             st.session_state.capture_thread = None
             
-            st.success("⏹️ Coaching session stopped.")
+            st.success("Coaching session stopped.")
             
         except Exception as e:
-            st.error(f"❌ Error stopping coaching: {str(e)}")
+            st.error(f"Error stopping coaching: {str(e)}")
             logger.error(f"Error stopping coaching: {e}")
     
     def frame_callback(self, frame):
@@ -245,7 +245,7 @@ class ValorantCoachApp:
         """Show welcome screen when not coaching"""
         st.markdown("""
         <div class="main-header">
-            <h1>🎮 Welcome to Valorant AI Coach</h1>
+            <h1>Welcome to Valorant AI Coach</h1>
             <p>Your personal AI assistant to improve your Valorant gameplay</p>
         </div>
         """, unsafe_allow_html=True)
@@ -255,7 +255,7 @@ class ValorantCoachApp:
         with col1:
             st.markdown("""
             <div class="metric-card">
-                <h3>🎯 Real-time Analysis</h3>
+                <h3>Real-time Analysis</h3>
                 <p>Get instant feedback on your gameplay mechanics</p>
             </div>
             """, unsafe_allow_html=True)
@@ -263,7 +263,7 @@ class ValorantCoachApp:
         with col2:
             st.markdown("""
             <div class="metric-card">
-                <h3>📊 Performance Tracking</h3>
+                <h3>Performance Tracking</h3>
                 <p>Monitor your improvement over time</p>
             </div>
             """, unsafe_allow_html=True)
@@ -271,7 +271,7 @@ class ValorantCoachApp:
         with col3:
             st.markdown("""
             <div class="metric-card">
-                <h3>🎓 Personalized Tips</h3>
+                <h3>Personalized Tips</h3>
                 <p>Receive coaching advice tailored to your skill level</p>
             </div>
             """, unsafe_allow_html=True)
@@ -279,7 +279,7 @@ class ValorantCoachApp:
         st.markdown("---")
         
         st.markdown("""
-        ### 🚀 Getting Started
+        ### Getting Started
         
         1. **Configure your profile** in the sidebar
         2. **Select your monitor** and preferred FPS
@@ -287,7 +287,7 @@ class ValorantCoachApp:
         4. **Play Valorant** and receive real-time tips
         5. **Review your performance** and improvement areas
         
-        ### 🎯 What We Analyze
+        ### What We Analyze
         
         - **Crosshair Placement**: Accuracy and consistency
         - **Movement**: Efficiency and positioning
@@ -299,7 +299,7 @@ class ValorantCoachApp:
     def show_coaching_interface(self):
         """Show the main coaching interface"""
         # Performance Overview
-        st.header("📊 Performance Overview")
+        st.header("Performance Overview")
         
         if st.session_state.performance_data:
             latest_performance = st.session_state.performance_data[-1]
@@ -335,22 +335,22 @@ class ValorantCoachApp:
                 )
         
         # Real-time Tips
-        st.header("💡 Real-time Coaching Tips")
+        st.header("Real-time Coaching Tips")
         
         if st.session_state.current_tips:
             for tip in st.session_state.current_tips[-3:]:  # Show last 3 tips
                 st.markdown(f"""
                 <div class="tip-card">
-                    <strong>🎯 {tip.category.replace('_', ' ').title()}</strong><br>
+                    <strong>{tip.category.replace('_', ' ').title()}</strong><br>
                     {tip.message}
                 </div>
                 """, unsafe_allow_html=True)
         else:
-            st.info("🎮 Start playing Valorant to receive coaching tips!")
+            st.info("Start playing Valorant to receive coaching tips!")
         
         # Performance Charts
         if len(st.session_state.performance_data) > 5:
-            st.header("📈 Performance Trends")
+            st.header("Performance Trends")
             
             # Create performance chart
             import pandas as pd
@@ -373,17 +373,17 @@ class ValorantCoachApp:
         
         # Training Recommendations
         if self.coach:
-            st.header("🎓 Training Recommendations")
+            st.header("Training Recommendations")
             
             col1, col2 = st.columns(2)
             
             with col1:
-                if st.button("📋 Generate Training Plan"):
+                if st.button("Generate Training Plan"):
                     training_plan = self.coach.generate_training_plan()
                     st.session_state.training_plan = training_plan
             
             with col2:
-                if st.button("📊 View Detailed Analysis"):
+                if st.button("View Detailed Analysis"):
                     self.show_detailed_analysis()
             
             if 'training_plan' in st.session_state:
@@ -391,7 +391,7 @@ class ValorantCoachApp:
                 st.subheader("Your Personalized Training Plan")
                 
                 for area in plan['focus_areas']:
-                    with st.expander(f"🎯 {area.replace('_', ' ').title()}"):
+                    with st.expander(f"{area.replace('_', ' ').title()}"):
                         st.write(f"**Goal:** {plan['goals'][plan['focus_areas'].index(area)]}")
                         st.write("**Exercises:**")
                         for exercise in plan['exercises'][area]:
@@ -399,7 +399,7 @@ class ValorantCoachApp:
     
     def show_detailed_stats(self):
         """Show detailed session statistics"""
-        st.header("📊 Detailed Session Statistics")
+        st.header("Detailed Session Statistics")
         
         if self.analyzer:
             summary = self.analyzer.get_session_summary()
@@ -434,7 +434,7 @@ class ValorantCoachApp:
     
     def show_detailed_analysis(self):
         """Show detailed analysis of current session"""
-        st.header("🔍 Detailed Analysis")
+        st.header("Detailed Analysis")
         
         if self.analyzer:
             summary = self.analyzer.get_session_summary()

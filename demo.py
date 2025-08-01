@@ -39,7 +39,7 @@ def create_demo_frame(width=1920, height=1080):
 
 def run_demo():
     """Run the demo"""
-    print("🎮 Valorant AI Coach Demo")
+    print("Valorant AI Coach Demo")
     print("=" * 50)
     
     # Initialize components
@@ -59,11 +59,11 @@ def run_demo():
     coach = Coach(player_profile)
     skill_assessor = SkillAssessor()
     
-    print("✅ Components initialized")
+    print("[SUCCESS] Components initialized")
     print()
     
     # Simulate gameplay analysis
-    print("🎯 Simulating gameplay analysis...")
+    print("[INFO] Simulating gameplay analysis...")
     print()
     
     for i in range(10):
@@ -84,19 +84,19 @@ def run_demo():
         
         if analysis.get('performance'):
             perf = analysis['performance']
-            print(f"  📊 Performance: Accuracy={perf.accuracy:.1%}, "
+            print(f"  [INFO] Performance: Accuracy={perf.accuracy:.1%}, "
                   f"Crosshair={perf.crosshair_placement:.1%}, "
                   f"Movement={perf.movement_efficiency:.1%}")
         
         if tips:
             for tip in tips:
-                print(f"  💡 Tip: {tip.message}")
+                print(f"  [TIP] {tip.message}")
         
         print()
         time.sleep(0.5)
     
     # Show final analysis
-    print("📈 Final Analysis")
+    print("Final Analysis")
     print("-" * 30)
     
     summary = analyzer.get_session_summary()
@@ -111,7 +111,7 @@ def run_demo():
     print()
     
     # Skill assessment
-    print("🎓 Skill Assessment")
+    print("Skill Assessment")
     print("-" * 30)
     
     if summary['current_performance']:
@@ -132,13 +132,13 @@ def run_demo():
         for skill_name, assessment in assessments.items():
             print(f"{skill_name.replace('_', ' ').title()}: {assessment.score:.1%}")
             if assessment.improvement_needed:
-                print(f"  ⚠️  Needs improvement")
+                print(f"  [WARNING] Needs improvement")
                 for rec in assessment.recommendations[:2]:
-                    print(f"  💡 {rec}")
+                    print(f"  [TIP] {rec}")
             print()
     
     # Training plan
-    print("📋 Training Plan")
+    print("Training Plan")
     print("-" * 30)
     
     training_plan = coach.generate_training_plan()
@@ -148,7 +148,7 @@ def run_demo():
     print()
     
     for area in training_plan['focus_areas']:
-        print(f"🎯 {area.replace('_', ' ').title()}:")
+        print(f"{area.replace('_', ' ').title()}:")
         print(f"  Goal: {training_plan['goals'][training_plan['focus_areas'].index(area)]}")
         print("  Exercises:")
         for exercise in training_plan['exercises'][area][:2]:
@@ -156,7 +156,7 @@ def run_demo():
         print()
     
     # Coaching statistics
-    print("📊 Coaching Statistics")
+    print("Coaching Statistics")
     print("-" * 30)
     
     coaching_stats = coach.get_coaching_stats()
@@ -166,7 +166,7 @@ def run_demo():
     print(f"Primary Role: {coaching_stats['player_profile'].primary_role}")
     
     print()
-    print("🎉 Demo completed! This shows the core functionality of the Valorant AI Coach.")
+    print("[SUCCESS] Demo completed! This shows the core functionality of the Valorant AI Coach.")
     print("To use with real gameplay, run: python main.py")
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ import os
 
 def main():
     """Run the Streamlit app"""
-    print("🎮 Starting Valorant AI Coach...")
+    print("Starting Valorant AI Coach...")
     
     # Set environment variables
     os.environ["STREAMLIT_SERVER_PORT"] = "8501"
@@ -24,9 +24,9 @@ def main():
             "--server.address", "localhost"
         ], check=True)
     except KeyboardInterrupt:
-        print("\n👋 Valorant AI Coach stopped.")
+        print("\nValorant AI Coach stopped.")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error running Streamlit: {e}")
+        print(f"Error running Streamlit: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

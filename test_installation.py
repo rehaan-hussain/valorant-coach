@@ -12,42 +12,42 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 def test_imports():
     """Test that all modules can be imported"""
-    print("🧪 Testing imports...")
+    print("[INFO] Testing imports...")
     
     try:
         # Test core modules
         from src.capture import ScreenCapture, FrameProcessor
-        print("✅ Capture modules imported successfully")
+        print("[SUCCESS] Capture modules imported successfully")
         
         from src.analysis import GameAnalyzer, SkillAssessor, BehaviorAnalyzer
-        print("✅ Analysis modules imported successfully")
+        print("[SUCCESS] Analysis modules imported successfully")
         
         from src.coaching import Coach, PlayerProfile
-        print("✅ Coaching modules imported successfully")
+        print("[SUCCESS] Coaching modules imported successfully")
         
         from src.utils import Config
-        print("✅ Utils modules imported successfully")
+        print("[SUCCESS] Utils modules imported successfully")
         
         return True
         
     except ImportError as e:
-        print(f"❌ Import error: {e}")
+        print(f"[ERROR] Import error: {e}")
         return False
 
 def test_basic_functionality():
     """Test basic functionality"""
-    print("\n🧪 Testing basic functionality...")
+    print("\n[INFO] Testing basic functionality...")
     
     try:
         # Test frame processor
         from src.capture.frame_processor import FrameProcessor
         processor = FrameProcessor()
-        print("✅ Frame processor initialized")
+        print("[SUCCESS] Frame processor initialized")
         
         # Test game analyzer
         from src.analysis.game_analyzer import GameAnalyzer
         analyzer = GameAnalyzer()
-        print("✅ Game analyzer initialized")
+        print("[SUCCESS] Game analyzer initialized")
         
         # Test coach
         from src.coaching.coach import Coach, PlayerProfile
@@ -60,22 +60,22 @@ def test_basic_functionality():
             playtime_hours=0
         )
         coach = Coach(profile)
-        print("✅ Coach initialized")
+        print("[SUCCESS] Coach initialized")
         
         # Test skill assessor
         from src.analysis.skill_assessor import SkillAssessor
         assessor = SkillAssessor()
-        print("✅ Skill assessor initialized")
+        print("[SUCCESS] Skill assessor initialized")
         
         return True
         
     except Exception as e:
-        print(f"❌ Functionality test error: {e}")
+        print(f"[ERROR] Functionality test error: {e}")
         return False
 
 def test_dependencies():
     """Test that required dependencies are available"""
-    print("\n🧪 Testing dependencies...")
+    print("\n[INFO] Testing dependencies...")
     
     # Core dependencies (required)
     core_packages = [
@@ -101,39 +101,39 @@ def test_dependencies():
     missing_optional = []
     
     # Test core packages
-    print("📦 Core dependencies:")
+    print("[INFO] Core dependencies:")
     for package_name, import_name in core_packages:
         try:
             __import__(import_name)
-            print(f"  ✅ {package_name} available")
+            print(f"  [SUCCESS] {package_name} available")
         except ImportError:
-            print(f"  ❌ {package_name} missing")
+            print(f"  [ERROR] {package_name} missing")
             missing_core.append(package_name)
     
     # Test optional packages
-    print("\n📦 Optional dependencies:")
+    print("\n[INFO] Optional dependencies:")
     for package_name, import_name in optional_packages:
         try:
             __import__(import_name)
-            print(f"  ✅ {package_name} available")
+            print(f"  [SUCCESS] {package_name} available")
         except ImportError:
-            print(f"  ⚠️  {package_name} missing (optional)")
+            print(f"  [WARNING] {package_name} missing (optional)")
             missing_optional.append(package_name)
     
     if missing_core:
-        print(f"\n❌ Missing core packages: {', '.join(missing_core)}")
+        print(f"\n[ERROR] Missing core packages: {', '.join(missing_core)}")
         print("Install with: pip install -r requirements.txt")
         return False
     
     if missing_optional:
-        print(f"\n⚠️  Missing optional packages: {', '.join(missing_optional)}")
+        print(f"\n[WARNING] Missing optional packages: {', '.join(missing_optional)}")
         print("These are not required for basic functionality")
     
     return True
 
 def test_demo_functionality():
     """Test if demo can run"""
-    print("\n🧪 Testing demo functionality...")
+    print("\n[INFO] Testing demo functionality...")
     
     try:
         # Test if we can create a simple demo frame
@@ -144,16 +144,16 @@ def test_demo_functionality():
         frame = np.zeros((480, 640, 3), dtype=np.uint8)
         cv2.circle(frame, (320, 240), 50, (0, 255, 0), 2)
         
-        print("✅ Demo frame creation works")
+        print("[SUCCESS] Demo frame creation works")
         return True
         
     except Exception as e:
-        print(f"❌ Demo functionality error: {e}")
+        print(f"[ERROR] Demo functionality error: {e}")
         return False
 
 def main():
     """Run all tests"""
-    print("🎮 Valorant AI Coach - Installation Test")
+    print("Valorant AI Coach - Installation Test")
     print("=" * 50)
     
     # Test dependencies
@@ -169,14 +169,14 @@ def main():
     demo_ok = test_demo_functionality()
     
     print("\n" + "=" * 50)
-    print("📊 Test Results:")
-    print(f"Dependencies: {'✅ PASS' if deps_ok else '❌ FAIL'}")
-    print(f"Imports: {'✅ PASS' if imports_ok else '❌ FAIL'}")
-    print(f"Functionality: {'✅ PASS' if func_ok else '❌ FAIL'}")
-    print(f"Demo: {'✅ PASS' if demo_ok else '❌ FAIL'}")
+    print("Test Results:")
+    print(f"Dependencies: {'[PASS]' if deps_ok else '[FAIL]'}")
+    print(f"Imports: {'[PASS]' if imports_ok else '[FAIL]'}")
+    print(f"Functionality: {'[PASS]' if func_ok else '[FAIL]'}")
+    print(f"Demo: {'[PASS]' if demo_ok else '[FAIL]'}")
     
     if deps_ok and imports_ok and func_ok:
-        print("\n🎉 Core functionality is working! Valorant AI Coach is ready to use.")
+        print("\n[SUCCESS] Core functionality is working! Valorant AI Coach is ready to use.")
         print("\nTo run the application:")
         print("  python main.py")
         print("  or")
@@ -185,10 +185,10 @@ def main():
         print("  python demo.py")
         
         if not demo_ok:
-            print("\n⚠️  Demo functionality has issues, but core features should work")
+            print("\n[WARNING] Demo functionality has issues, but core features should work")
     else:
-        print("\n❌ Some tests failed. Please check the errors above.")
-        print("\n💡 Try manual installation:")
+        print("\n[ERROR] Some tests failed. Please check the errors above.")
+        print("\nTry manual installation:")
         print("   See INSTALL.md for detailed instructions")
         return 1
     
